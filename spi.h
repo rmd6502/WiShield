@@ -35,6 +35,9 @@
 
 #ifndef SPI_H_
 #define SPI_H_
+#if defined(__PIC32MX__)
+  #include <SoftSPI.h>
+#endif
 
 // Uncomment one line below to
 // specify which Arduino pin
@@ -71,6 +74,32 @@
 #define ZG2100_INTR						BIT0
 #endif
 
+#if defined(__PIC32MX__)
+#define SPI0_SS_BIT        4 
+#define SPI0_SS_DDR        TRISD
+#define SPI0_SS_PORT       PORTD
+
+#define SPI0_SCLK_BIT      3
+#define SPI0_SCLK_DDR      TRISA
+#define SPI0_SCLK_PORT     PORTA
+
+#define SPI0_MOSI_BIT      4
+#define SPI0_MOSI_DDR      TRISC
+#define SPI0_MOSI_PORT     PORTC
+
+#define SPI0_MISO_BIT      2
+#define SPI0_MISO_DDR      TRISA
+#define SPI0_MISO_PORT     PORTA
+
+static uint8_t __spdr;
+#define SPI0_Init             SoftSPI.begin()
+#define SPI0_TxData(Data)     __spdr = SoftSPI.transfer(data)
+#define SPI0_WaitForSend()
+#define SPI0_SendByte(Data)	  SPI0_TxData(Data);SPI0_WaitForSend()
+#define SPI0_RxData           (__spdr)
+#define SPI0_WaitForReceive()
+
+#else
 #define SPI0_SS_BIT						BIT2
 #define SPI0_SS_DDR						DDRB
 #define SPI0_SS_PORT					PORTB
@@ -111,6 +140,7 @@
 										SPCR  = 0x50;\
 										SPSR  = 0x01
 #endif
+#endif
 
 //ZG2100 SPI HAL
 #define ZG2100_SpiInit					SPI0_Init
@@ -118,9 +148,9 @@
 #define ZG2100_SpiRecvData				SPI0_RxData
 
 
-#define ZG2100_CS_BIT					BIT2
-#define ZG2100_CS_DDR					DDRB
-#define ZG2100_CS_PORT					PORTB
+#define ZG2100_CS_BIT					SPI0_SS_BIT
+#define ZG2100_CS_DDR					SPI0_SS_DDR
+#define ZG2100_CS_PORT			        SPI0_SS_PORT
 
 #define ZG2100_CSInit()					(ZG2100_CS_DDR |= ZG2100_CS_BIT)
 #define ZG2100_CSon()					(ZG2100_CS_PORT |= ZG2100_CS_BIT)
