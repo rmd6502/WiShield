@@ -269,26 +269,47 @@ void send() {
 boolean processLine(char* data, int len) {
 
 	// Check for a valid GET line
-	if ((uip_conn->appstate.request == NULL) && (strncmp(data, "GET /", 4) == 0)) {
-		// URL starts at the '/'
-		char* start = data + 4;
-		// Find trailing space after the URL
-		data = start;
-		char* end = data + len;
-		while (++data < end) {
-			if (*data == ' ') {
-				// Replace the space with a NULL to terminate it
-				*(data++) = 0;
-				// Compute length of the URL including the NULL
-				int len = data - start;
-				// Allocate space for the URL and copy the contents
-				uip_conn->appstate.request = malloc(len);
-				memcpy(uip_conn->appstate.request, start, len);
-				return false;
-			}
-		}
-		// No space, not valid
-	}
+	if ((uip_conn->appstate.request == NULL) {
+    if (strncmp(data, "GET /", 4) == 0)) {
+		  // URL starts at the '/'
+		  char* start = data + 4;
+		  // Find trailing space after the URL
+		  data = start;
+		  char* end = data + len;
+		  while (++data < end) {
+			  if (*data == ' ') {
+				  // Replace the space with a NULL to terminate it
+				  *(data++) = 0;
+				  // Compute length of the URL including the NULL
+				  int len = data - start;
+				  // Allocate space for the URL and copy the contents
+				  uip_conn->appstate.request = malloc(len);
+				  memcpy(uip_conn->appstate.request, start, len);
+          uip_conn->appstate.verb = "GET";
+				  return false;
+			  }
+		  }
+		  // No space, not valid
+	  } else if (strncmp(data, "PUT /", 4) == 0) {
+		  char* start = data + 4;
+		  // Find trailing space after the URL
+		  data = start;
+		  char* end = data + len;
+		  while (++data < end) {
+			  if (*data == ' ') {
+				  // Replace the space with a NULL to terminate it
+				  *(data++) = 0;
+				  // Compute length of the URL including the NULL
+				  int len = data - start;
+				  // Allocate space for the URL and copy the contents
+				  uip_conn->appstate.request = malloc(len);
+				  memcpy(uip_conn->appstate.request, start, len);
+          uip_conn->appstate.verb = "PUT";
+				  return false;
+			  }
+		  }
+    } 
+  }
 
 	return (len == 0);
 }

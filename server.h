@@ -60,6 +60,7 @@ struct conn_state {
 	int sentCount; // Number of bytes awaiting an ack
 	char* cursor; // Virtual cursor for write operations
 	void* request; // Points to a char* URL (server mode) or a request object (client mode)
+  char *verb;  // GET, PUT, POST, DELETE, ...
 };
 
 typedef struct conn_state uip_tcp_appstate_t;
